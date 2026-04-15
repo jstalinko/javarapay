@@ -97,7 +97,9 @@ class WebhookController extends Controller
             'payload' => json_encode($data),
             'last_sent_at' => now(),
             'retries' => 1,
-        ]);
+            'response_body' =>'-',
+            'response_code' => 201
+         ]);
 
         try {
             $response = Http::timeout(10)->post($project->webhook_url, $data);
