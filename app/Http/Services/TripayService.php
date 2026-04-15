@@ -10,14 +10,14 @@ class TripayService
 {
     private $apiKey;
     private $merchantCode;
-    private $secretKey;
+    private $privateKey;
     private $apiUrl;
 
     public function __construct()
     {
         $this->apiKey = config('tripay.apikey');
         $this->merchantCode = config('tripay.merchant_code');
-        $this->secretKey = config('tripay.secret_key');
+        $this->privateKey = config('tripay.private_key');
 
         // Tentukan Base URL berdasarkan mode
         $isProduction = config('tripay.production_mode');
@@ -130,7 +130,7 @@ class TripayService
      */
     private function signature(string $merchantRef, int $amount)
     {
-        $signature = hash_hmac('sha256', $this->merchantCode . $merchantRef . $amount, $this->secretKey);
+        $signature = hash_hmac('sha256', $this->merchantCode . $merchantRef . $amount, $this->privateKey);
         return $signature;
     }
 
@@ -139,7 +139,7 @@ class TripayService
      */
     private function signatureOpen(string $merchantRef , string $methodCode)
     {
-        $signature = hash_hmac('sha256', $this->merchantCode.$methodCode.$merchantRef, $this->secretKey);
+        $signature = hash_hmac('sha256', $this->merchantCode.$methodCode.$merchantRef, $this->privateKey);
         return $signature;
     }
  

@@ -8,8 +8,43 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return Inertia::render('Dashboard');
+        $userId = auth()->id();
+        
+        // Stats calculation
+        $totalTransaksi = \App\Models\Transaction::whereHas('project', function($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })->count();
+
+        $totalProject = \App\Models\Project::where('user_id', $userId)->count();
+
+        $saldo = \App\Models\Transaction::whereHas('project', function($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })->whereNotNull('settled_at')->sum('total_amount');
+
+        $saldoTertunda = \App\Models\Transaction::whereHas('project', function($q) use ($userId) {
+            $q->where('user_id', $userId);
+        })->where('status', 'PAID')->whereNull('settled_at')->sum('total_amount');
+
+        $orders = \App\Models\Order::where('user_id', $userId)
+            ->where('created_at', '>=', now()->subHours(24))
+            ->with('project')
+            ->orderBy('created_at', 'desc')
+            ->paginate(5); // Smaller page size for dashboard view
+
+        $projects = \App\Models\Project::where('user_id', $userId)
+            ->where('active', true)
+            ->get();
+
+        return Inertia::render('Dashboard', [
+            'saldo' => (int) $saldo,
+            'saldoTertunda' => (int) $saldoTertunda,
+            'totalTransaksi' => $totalTransaksi,
+            'totalProject' => $totalProject,
+            'orders' => $orders,
+            'projects' => $projects,
+        ]);
     }
+
 
     public function project()
     {
@@ -19,42 +54,38 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function projectStore(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'fee_type' => 'required|in:merchant,customer',
-            'webhook_url' => 'nullable|url',
-        ]);
-
-        $project = new \App\Models\Project();
-        $project->user_id = auth()->id();
-        $project->name = $request->name;
-        $project->fee_type = $request->fee_type;
-        $project->webhook_url = $request->webhook_url;
-        $project->apikey = \Illuminate\Support\Str::random(32);
-        $project->merchant_code = 'MC' . strtoupper(\Illuminate\Support\Str::random(10));
-        $project->status = 'in_review';
-        $project->active = true;
-        $project->save();
-
-        return redirect()->back()->with('success', 'Project created successfully.');
-    }
     public function transaction()
     {
-        return Inertia::render('Transaction');
+        $transactions = \App\Models\Transaction::whereHas('project', function($query) {
+            $query->where('user_id', auth()->id());
+        })->with('project')->orderBy('created_at', 'desc')->paginate(10);
+
+        return Inertia::render('Transaction', [
+            'transactions' => $transactions
+        ]);
     }
+
     public function withdrawal()
     {
         return Inertia::render('Withdrawal');
     }
     public function bank()
     {
-        return Inertia::render('Bank');
+        $banks = \App\Models\Bank::where('user_id', auth()->id())->orderBy('is_primary', 'desc')->get();
+        return Inertia::render('Bank', [
+            'banks' => $banks
+        ]);
     }
+
     public function webhook()
     {
-        return Inertia::render('Webhook');
+        $logs = \App\Models\WebhookLog::whereHas('project', function($query) {
+            $query->where('user_id', auth()->id());
+        })->with('project')->orderBy('created_at', 'desc')->paginate(10);
+
+        return Inertia::render('WebhookLog', [
+            'logs' => $logs
+        ]);
     }
 
    

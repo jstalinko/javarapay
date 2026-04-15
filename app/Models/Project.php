@@ -15,7 +15,14 @@ class Project extends Model
         'webhook_url',
         'active',
         'status',
-        'user_id'
+        'user_id',
+        'channels'
+    ];
+
+    protected $casts = [
+        'channels' => 'array',
+        'is_production' => 'boolean',
+        'active' => 'boolean',
     ];
 
     public function user()
@@ -23,3 +30,4 @@ class Project extends Model
         return $this->belongsTo(User::class);
     }
 }
+

@@ -1,7 +1,7 @@
 <?php
 return [
-    'apikey' => '',
-    'merchant_code' => '',
-    'secret_code' => '',
-    'production_mode' => '',
+    'apikey' => 'DEV-h9WRz6gl4Ttcgq3eAnIoypdXGHOLEBxyxkcwfjWM',
+    'merchant_code' => 'T17010',
+    'private_key' => 'ko1mj-wbDMD-dTL9G-384gd-vNtrY',
+    'production_mode' => false,
 ];

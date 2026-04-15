@@ -1,9 +1,9 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
-import { Head, useForm, router } from '@inertiajs/vue3';
+import { Head, useForm, router, Link } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { MoreHorizontal, Eye, Edit, ShieldCheck, Copy, EyeOff, Check, Plus } from 'lucide-vue-next';
+import { MoreHorizontal, Eye, Edit, ShieldCheck, Copy, EyeOff, Check, Plus, Banknote } from 'lucide-vue-next';
+import { toast } from 'vue-sonner';
 
 // UI components
 import { Button } from '@/components/ui/button';
@@ -24,20 +24,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 
-const props = defineProps<{
-    projects: any[];
-}>();
+const props = defineProps({
+    projects: Array,
+});
 
-const breadcrumbs: BreadcrumbItem[] = [
+const breadcrumbs = [
     { title: 'Dashboard', href: '/dashboard' },
     { title: 'Project', href: '/dashboard/project' },
 ];
 
-const selectedProject = ref<any>(null);
+const selectedProject = ref(null);
 const isModalOpen = ref(false);
-const modalMode = ref<'detail' | 'edit' | 'create'>('detail');
+const modalMode = ref('detail');
 const isApikeyVisible = ref(false);
-const copiedField = ref<string | null>(null);
+const copiedField = ref(null);
 
 const form = useForm({
     name: '',
@@ -47,7 +47,7 @@ const form = useForm({
     active: true,
 });
 
-const openModal = (project: any, mode: 'detail' | 'edit' | 'create') => {
+const openModal = (project, mode) => {
     modalMode.value = mode;
     if (mode === 'create') {
         form.reset();
@@ -75,7 +75,7 @@ const closeModal = () => {
     }, 300);
 };
 
-const copyToClipboard = (text: string, field: string) => {
+const copyToClipboard = (text, field) => {
     if (!text) return;
     navigator.clipboard.writeText(text);
     copiedField.value = field;
@@ -89,20 +89,36 @@ const copyToClipboard = (text: string, field: string) => {
 const submit = () => {
     if (modalMode.value === 'create') {
         form.post('/dashboard/project', {
-            onSuccess: () => closeModal()
+            onSuccess: () => {
+                toast.success('Project created successfully');
+                closeModal();
+            },
+            onError: () => {
+                toast.error('Failed to create project');
+            }
         });
     } else if (modalMode.value === 'edit') {
-        // Only handles edit update, this could be adjusted according to backend route.
-        // For now we just close or call an inertia route if it existed.
-        // router.put(route('dashboard.project.update', selectedProject.value.id), selectedProject.value, {
-        //    onSuccess: () => closeModal()
-        // })
-        closeModal();
+        form.post(`/dashboard/project/${selectedProject.value.id}`, {
+            onSuccess: () => {
+                toast.success('Project updated successfully');
+                closeModal();
+            },
+            onError: () => {
+                toast.error('Failed to update project');
+            }
+        });
     }
 };
 
-const toggleToProduction = (project: any) => {
-    // router.put(route('dashboard.project.toggle_production', project.id))
+const toggleToProduction = (project) => {
+    router.post(`/dashboard/project/${project.id}/toggle-production`, {}, {
+        onSuccess: () => {
+            toast.success('Project environment updated');
+        },
+        onError: () => {
+            toast.error('Failed to update environment');
+        }
+    });
 };
 </script>
 
@@ -174,6 +190,10 @@ const toggleToProduction = (project: any) => {
                                                 <DropdownMenuItem @click="toggleToProduction(project)" v-if="!project.is_production">
                                                     <ShieldCheck class="mr-2 h-4 w-4" />
                                                     <span>Toggle to Production</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem @click="router.visit(`/dashboard/project/${project.id}/channels`)">
+                                                    <Banknote class="mr-2 h-4 w-4"/>
+                                                    <span>Payment Channels</span>
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>
