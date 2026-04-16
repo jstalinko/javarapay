@@ -94,18 +94,13 @@ const faqs = [
         <meta name="description" content="JavaraPay adalah layanan payment link yang memudahkan Anda menerima pembayaran online untuk keperluan apa saja tanpa repot mengurus sistem." />
     </Head>
 
-    <div class="min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans text-slate-800 dark:text-zinc-100 selection:bg-indigo-100 dark:selection:bg-indigo-900/50 selection:text-indigo-900 dark:selection:text-indigo-300">
+    <div class="min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans text-slate-800 dark:text-zinc-100 selection:bg-pink-100 dark:selection:bg-pink-900/50 selection:text-pink-900 dark:selection:text-pink-300">
         
         <!-- Navbar -->
         <nav class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md">
             <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
                 <a href="/" class="flex items-center gap-2 transition-opacity hover:opacity-80">
-                    <svg viewBox="0 0 28 28" fill="none" class="h-8 w-8" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="28" height="28" rx="8" fill="#6366f1" />
-                        <path d="M8 8h4v8a4 4 0 01-4-4V8z" fill="#fff" opacity=".9"/>
-                        <path d="M14 8h6v2h-4v4a4 4 0 01-2-3.5V8z" fill="#fff" opacity=".7"/>
-                    </svg>
-                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">JavaraPay</span>
+                   <img src="/javarapay-text-bg.png" class="w-40 rounded-full"/>
                 </a>
                 
                 <div class="flex items-center gap-4 sm:gap-6">
@@ -126,7 +121,7 @@ const faqs = [
                     <Link
                         v-if="$page.props.auth.user"
                         :href="route('dashboard')"
-                        class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow"
+                        class="inline-flex items-center justify-center rounded-lg bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-pink-700 hover:shadow"
                     >
                         Dashboard
                     </Link>
@@ -134,7 +129,7 @@ const faqs = [
                         <Link :href="route('login')" class="hidden text-sm font-medium text-slate-600 dark:text-zinc-300 transition-colors hover:text-slate-900 dark:hover:text-white sm:block">
                             Masuk
                         </Link>
-                        <Link :href="route('register')" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow">
+                        <Link :href="route('register')" class="inline-flex items-center justify-center rounded-lg bg-pink-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-pink-700 hover:shadow">
                             Daftar Gratis
                         </Link>
                     </template>
@@ -150,13 +145,13 @@ const faqs = [
             </div>
 
             <div class="mx-auto max-w-4xl px-6 lg:px-8 text-center pt-8">
-                <span class="inline-flex items-center gap-2 rounded-full border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10 px-4 py-1.5 text-sm font-semibold text-indigo-700 dark:text-indigo-400 shadow-sm leading-6">
+                <span class="inline-flex items-center gap-2 rounded-full border border-pink-100 dark:border-pink-500/20 bg-pink-50 dark:bg-pink-500/10 px-4 py-1.5 text-sm font-semibold text-pink-700 dark:text-pink-400 shadow-sm leading-6">
                     Solusi Pembayaran Modern
                 </span>
                 
                 <h1 class="mt-8 text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
                     Terima Pembayaran <br class="hidden sm:block" /> 
-                    <span class="text-indigo-600 dark:text-indigo-400">Lebih Mudah & Dekat</span>
+                    <span class="text-pink-600 dark:text-pink-400">Lebih Mudah & Dekat</span>
                 </h1>
                 
                 <p class="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-slate-600 dark:text-zinc-400 leading-relaxed">
@@ -167,7 +162,7 @@ const faqs = [
                     <Link
                         v-if="$page.props.auth.user"
                         :href="route('dashboard')"
-                        class="group inline-flex items-center justify-center w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900"
+                        class="group inline-flex items-center justify-center w-full sm:w-auto rounded-xl bg-pink-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-pink-700 hover:shadow-lg focus:ring-4 focus:ring-pink-100 dark:focus:ring-pink-900"
                     >
                         Ke Dashboard Sekarang
                         <ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -175,7 +170,7 @@ const faqs = [
                     <Link
                         v-else
                         :href="route('register')"
-                        class="group inline-flex items-center justify-center w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900"
+                        class="group inline-flex items-center justify-center w-full sm:w-auto rounded-xl bg-pink-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-pink-700 hover:shadow-lg focus:ring-4 focus:ring-pink-100 dark:focus:ring-pink-900"
                     >
                         Mulai Coba — Gratis
                         <ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -183,7 +178,7 @@ const faqs = [
                     <Link
                         v-if="!$page.props.auth.user"
                         :href="route('login')"
-                        class="w-full sm:w-auto text-base font-semibold leading-6 text-slate-700 dark:text-zinc-300 px-4 py-3 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                        class="w-full sm:w-auto text-base font-semibold leading-6 text-slate-700 dark:text-zinc-300 px-4 py-3 hover:text-pink-600 dark:hover:text-pink-400 transition-colors"
                     >
                         Sudah punya akun? Masuk
                     </Link>
@@ -219,7 +214,7 @@ const faqs = [
         <section class="py-24 bg-slate-50 dark:bg-zinc-950" id="features">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-xl font-bold leading-7 text-indigo-600 dark:text-indigo-400">Mudah Digunakan</h2>
+                    <h2 class="text-xl font-bold leading-7 text-pink-600 dark:text-pink-400">Mudah Digunakan</h2>
                     <p class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Sistem yang Ramah Pengguna</p>
                     <p class="mt-4 text-lg leading-8 text-slate-600 dark:text-zinc-400">
                         Kami menjauhkan segala hal teknis yang rumit sehingga Anda dapat sepenuhnya fokus pada bisnis dan pelanggan yang Anda layani.
@@ -229,7 +224,7 @@ const faqs = [
                     <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
                         <div v-for="(feat, i) in features" :key="i" class="flex flex-col items-start">
                             <div class="rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-sm p-3 mb-5 flex items-center justify-center">
-                                <component :is="feat.icon" class="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                                <component :is="feat.icon" class="h-6 w-6 text-pink-600 dark:text-pink-400" />
                             </div>
                             <h3 class="text-lg font-bold leading-7 text-slate-900 dark:text-white">{{ feat.title }}</h3>
                             <p class="mt-2 text-base leading-7 text-slate-600 dark:text-zinc-400">{{ feat.desc }}</p>
@@ -248,19 +243,19 @@ const faqs = [
                 <div class="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-3 sm:gap-x-12 relative">
                     <!-- Step 1 -->
                     <div class="relative flex flex-col items-center">
-                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">1</div>
+                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-pink-50 dark:bg-pink-500/10 border-2 border-pink-200 dark:border-pink-500/20 text-xl font-bold text-pink-600 dark:text-pink-400 shadow-sm">1</div>
                         <h3 class="mt-6 text-lg font-bold text-slate-900 dark:text-white">Daftar Tanpa Syarat</h3>
                         <p class="mt-2 text-slate-600 dark:text-zinc-400">Buat akun dengan gampang, cukup bermodalkan email aktif.</p>
                     </div>
                     <!-- Step 2 -->
                     <div class="relative flex flex-col items-center">
-                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">2</div>
+                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-pink-50 dark:bg-pink-500/10 border-2 border-pink-200 dark:border-pink-500/20 text-xl font-bold text-pink-600 dark:text-pink-400 shadow-sm">2</div>
                         <h3 class="mt-6 text-lg font-bold text-slate-900 dark:text-white">Buat Link Sekali Klik</h3>
                         <p class="mt-2 text-slate-600 dark:text-zinc-400">Isi besaran form tagihan, lalu Anda akan langsung dapat link.</p>
                     </div>
                     <!-- Step 3 -->
                     <div class="relative flex flex-col items-center">
-                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">3</div>
+                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-pink-50 dark:bg-pink-500/10 border-2 border-pink-200 dark:border-pink-500/20 text-xl font-bold text-pink-600 dark:text-pink-400 shadow-sm">3</div>
                         <h3 class="mt-6 text-lg font-bold text-slate-900 dark:text-white">Uang Langsung Cair</h3>
                         <p class="mt-2 text-slate-600 dark:text-zinc-400">Ketika pelanggan membayar, dana otomatis masuk dan bisa dicek real-time.</p>
                     </div>
@@ -280,7 +275,7 @@ const faqs = [
                         v-for="(faq, i) in faqs" 
                         :key="i"
                         class="overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm transition-all duration-200"
-                        :class="openFaq === i ? 'ring-2 ring-indigo-500 border-transparent dark:border-transparent shadow-md' : 'border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'"
+                        :class="openFaq === i ? 'ring-2 ring-pink-500 border-transparent dark:border-transparent shadow-md' : 'border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'"
                     >
                         <button 
                             @click="toggleFaq(i)"
@@ -299,7 +294,7 @@ const faqs = [
                             <p class="text-slate-600 dark:text-zinc-400 leading-relaxed">{{ faq.a }}</p>
                             <!-- If linking to fee explicitly from the text mentioned -->
                             <div v-if="faq.a.includes('(/fee)') || faq.a.includes('( /fee )')" class="mt-3">
-                                <Link href="/fee" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold text-sm flex items-center gap-1">
+                                <Link href="/fee" class="text-pink-600 dark:text-pink-400 hover:text-pink-700 dark:hover:text-pink-300 font-semibold text-sm flex items-center gap-1">
                                     Cek simulasi biaya di sini <ArrowRight class="h-4 w-4" />
                                 </Link>
                             </div>
@@ -310,7 +305,7 @@ const faqs = [
         </section>
 
         <!-- Pre-footer CTA -->
-        <div class="bg-indigo-600 dark:bg-indigo-700">
+        <div class="bg-pink-600 dark:bg-pink-700">
             <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:px-8 lg:py-24 text-center">
                 <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
                     <span class="block">Masih mencari layanan yang tepat?</span>
@@ -320,14 +315,14 @@ const faqs = [
                     <Link
                         v-if="!$page.props.auth.user"
                         :href="route('register')"
-                        class="inline-flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 px-8 py-3.5 text-base font-bold text-indigo-700 dark:text-white shadow-md transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800"
+                        class="inline-flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 px-8 py-3.5 text-base font-bold text-pink-700 dark:text-white shadow-md transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800"
                     >
                         Buat Akun Anda
                     </Link>
                     <Link
                         v-else
                         :href="route('dashboard')"
-                        class="inline-flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 px-8 py-3.5 text-base font-bold text-indigo-700 dark:text-white shadow-md transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800"
+                        class="inline-flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 px-8 py-3.5 text-base font-bold text-pink-700 dark:text-white shadow-md transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800"
                     >
                         Alat Pembayaran
                     </Link>
@@ -339,7 +334,7 @@ const faqs = [
         <footer class="bg-white dark:bg-zinc-950 py-10 border-t border-slate-200 dark:border-zinc-800">
             <div class="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div class="flex items-center gap-2 opacity-60 grayscale dark:opacity-80">
-                    <svg viewBox="0 0 28 28" fill="none" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg"><rect width="28" height="28" rx="8" fill="#6366f1" /><path d="M8 8h4v8a4 4 0 01-4-4V8z" fill="#fff" opacity=".9"/><path d="M14 8h6v2h-4v4a4 4 0 01-2-3.5V8z" fill="#fff" opacity=".7"/></svg>
+                    <svg viewBox="0 0 28 28" fill="none" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg"><rect width="28" height="28" rx="8" fill="#ec4899" /><path d="M8 8h4v8a4 4 0 01-4-4V8z" fill="#fff" opacity=".9"/><path d="M14 8h6v2h-4v4a4 4 0 01-2-3.5V8z" fill="#fff" opacity=".7"/></svg>
                     <span class="font-bold text-slate-800 dark:text-zinc-400">JavaraPay</span>
                 </div>
                 <p class="text-sm text-slate-500 dark:text-zinc-500">
