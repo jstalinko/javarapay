@@ -26,7 +26,10 @@ const props = defineProps<{
     totalProject: number;
     orders: any; // Paginated orders
     projects: any[]; // User projects
-    announcements?: { id: number; title: string; body: string; date: string }[];
+    announcements?: {
+        data: { id: number; title: string; category: string; content: string; created_at: string }[];
+        links: any[];
+    };
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -97,14 +100,18 @@ const visitLink = (order: any) => {
     window.open(url, '_blank');
 };
 
-const defaultAnnouncements = props.announcements ?? [
-    {
-        id: 1,
-        title: '🎉 Selamat Datang di JavaraPay!',
-        body: 'Terima kasih sudah mendaftar. Mulai buat payment link pertama Anda dan terima pembayaran dengan mudah. Kunjungi halaman Project untuk memulai.',
-        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-    },
-];
+const isAnnouncementModalOpen = ref(false);
+const activeAnnouncement = ref<any>(null);
+
+const viewAnnouncement = (ann: any) => {
+    activeAnnouncement.value = ann;
+    isAnnouncementModalOpen.value = true;
+};
+
+const closeAnnouncementModal = () => {
+    isAnnouncementModalOpen.value = false;
+    activeAnnouncement.value = null;
+};
 </script>
 
 <template>
@@ -246,18 +253,35 @@ const defaultAnnouncements = props.announcements ?? [
                                 <CardTitle class="text-base font-bold">Announcements</CardTitle>
                             </div>
                         </CardHeader>
-                        <CardContent class="p-0">
-                            <div class="divide-y divide-sidebar-border/70">
+                        <CardContent class="p-0 flex flex-col h-[calc(100%-65px)]">
+                            <div class="divide-y divide-sidebar-border/70 flex-grow">
                                 <div
-                                    v-for="ann in defaultAnnouncements"
+                                    v-for="ann in announcements?.data || []"
                                     :key="ann.id"
-                                    class="px-6 py-5 transition-colors hover:bg-muted/50"
+                                    class="px-6 py-5 transition-colors hover:bg-muted/50 cursor-pointer"
+                                    @click="viewAnnouncement(ann)"
                                 >
                                     <div class="mb-2 flex items-center justify-between">
-                                        <h3 class="text-sm font-bold text-foreground">{{ ann.title }}</h3>
-                                        <span class="text-[10px] text-muted-foreground uppercase font-black tracking-tighter">{{ ann.date }}</span>
+                                        <h3 class="text-sm font-bold text-foreground line-clamp-1 mr-2" :title="ann.title">{{ ann.title }}</h3>
+                                        <span class="text-[10px] text-muted-foreground uppercase font-black tracking-tighter shrink-0">{{ formatDate(ann.created_at) }}</span>
                                     </div>
-                                    <p class="text-xs leading-relaxed text-muted-foreground/80">{{ ann.body }}</p>
+                                    <div class="mb-1 flex">
+                                        <span class="inline-flex rounded bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 capitalize">{{ ann.category }}</span>
+                                    </div>
+                                    <div class="text-xs leading-relaxed text-muted-foreground/80 line-clamp-2 prose prose-sm dark:prose-invert max-w-none prose-p:my-0" v-html="ann.content"></div>
+                                </div>
+                                <div v-if="!announcements || announcements.data.length === 0" class="px-6 py-12 text-center text-muted-foreground text-sm">
+                                    No announcements available.
+                                </div>
+                            </div>
+                            
+                            <!-- Announcements Pagination -->
+                            <div v-if="announcements?.links && announcements.links.length > 3" class="flex items-center justify-between px-6 py-3 border-t bg-muted/10 mt-auto">
+                                <div class="flex gap-1 w-full justify-center">
+                                    <template v-for="(link, i) in announcements.links" :key="i">
+                                        <div v-if="link.url === null" class="h-7 px-2 rounded border border-sidebar-border/70 flex items-center text-[10px] opacity-50" v-html="link.label"></div>
+                                        <Link v-else :href="link.url" class="h-7 px-2 rounded border border-sidebar-border/70 flex items-center text-[10px] hover:bg-muted transition-colors" :class="{'bg-primary text-primary-foreground border-primary': link.active}" v-html="link.label" preserve-scroll />
+                                    </template>
                                 </div>
                             </div>
                         </CardContent>
@@ -265,6 +289,27 @@ const defaultAnnouncements = props.announcements ?? [
                 </div>
             </div>
         </div>
+
+        <!-- Announcement Detail Modal -->
+        <Dialog v-model:open="isAnnouncementModalOpen">
+            <DialogContent class="sm:max-w-[500px]">
+                <DialogHeader v-if="activeAnnouncement">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="inline-flex rounded bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 capitalize">{{ activeAnnouncement.category }}</span>
+                        <span class="text-xs text-muted-foreground">{{ formatDate(activeAnnouncement.created_at) }}</span>
+                    </div>
+                    <DialogTitle class="text-lg font-bold leading-tight">{{ activeAnnouncement.title }}</DialogTitle>
+                </DialogHeader>
+                
+                <div v-if="activeAnnouncement" class="py-4">
+                    <div class="text-sm text-foreground/90 leading-relaxed prose prose-sm dark:prose-invert max-w-none" v-html="activeAnnouncement.content"></div>
+                </div>
+
+                <DialogFooter>
+                    <Button @click="closeAnnouncementModal">Close</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
 
         <!-- Create Payment Link Modal -->
         <Dialog v-model:open="isModalOpen">

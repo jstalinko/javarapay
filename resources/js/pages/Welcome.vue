@@ -1,6 +1,28 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useAppearance } from '@/composables/useAppearance';
+import { 
+    ChevronDown, 
+    ChevronUp, 
+    ArrowRight, 
+    Check, 
+    Zap, 
+    Target, 
+    DollarSign, 
+    Wallet, 
+    Shield,
+    Moon,
+    Sun
+} from 'lucide-vue-next';
+
+const { appearance, updateAppearance } = useAppearance();
+
+const isDark = computed(() => appearance.value === 'dark');
+
+const toggleTheme = () => {
+    updateAppearance(isDark.value ? 'light' : 'dark');
+};
 
 const openFaq = ref<number | null>(null);
 
@@ -10,104 +32,109 @@ function toggleFaq(index: number) {
 
 const features = [
     {
-        icon: '⚡',
-        title: 'Aktivasi Instan',
-        desc: 'Daftar dan mulai terima pembayaran dalam hitungan menit. Tanpa proses panjang.',
+        icon: Zap,
+        title: 'Aktivasi Tanpa Ribet',
+        desc: 'Daftar sekarang, Anda bisa langsung menerima pembayaran hari ini juga. Tak perlu proses validasi yang memakan waktu lama.',
     },
     {
-        icon: '🔗',
-        title: 'Integrasi Mudah',
-        desc: 'API sederhana dan dokumentasi lengkap. Integrasikan ke platform Anda dengan cepat.',
+        icon: Target,
+        title: 'Siap Pakai Kapan Saja',
+        desc: 'Bagikan link pembayaran langsung via WhatsApp, Instagram, atau jadikan sebagai alat transaksi di website pribadi Anda.',
     },
     {
-        icon: '💰',
-        title: 'Biaya Rendah',
-        desc: 'Nikmati biaya transaksi yang kompetitif untuk setiap pembayaran yang masuk.',
+        icon: DollarSign,
+        title: 'Biaya yang Transparan',
+        desc: 'Setiap potongan transaksi kami tampilkan dengan jelas di awal. Tanpa embel-embel atau biaya langganan bulanan.',
     },
     {
-        icon: '🏦',
-        title: 'Penarikan Murah',
-        desc: 'Tarik dana ke rekening bank Anda kapan saja dengan biaya minimal.',
+        icon: Wallet,
+        title: 'Pencairan Praktis & Cepat',
+        desc: 'Tarik pendapatan Anda ke rekening bank tujuan kapan saja, nominalnya akan langsung masuk dengan cepat.',
     },
     {
-        icon: '🚀',
-        title: 'Tidak Perlu KYC',
-        desc: 'Mulai terima pembayaran tanpa verifikasi identitas yang rumit dan memakan waktu.',
+        icon: Shield,
+        title: 'Aman untuk Semua Pihak',
+        desc: 'Mulai dari individu, freelancer, hingga pemilik bisnis dapat bertransaksi aman tanpa dipersulit oleh dokumen badan usaha.',
     },
 ];
 
 const faqs = [
     {
-        q: 'Apa itu JavaraPay?',
+        q: 'Mengapa JavaraPay?',
         a: 'JavaraPay adalah layanan payment link yang memudahkan Anda menerima pembayaran online. Cukup buat link pembayaran, bagikan ke pelanggan, dan terima uang langsung ke akun Anda.',
     },
     {
-        q: 'Berapa biaya per transaksi?',
-        a: 'Biaya transaksi JavaraPay sangat kompetitif dan bervariasi tergantung metode pembayaran yang digunakan pelanggan. Tidak ada biaya bulanan atau biaya tersembunyi.',
+        q: 'Berapa biaya JavaraPay?',
+        a: 'Biaya transaksi JavaraPay sangat kompetitif dan bervariasi tergantung metode pembayaran yang digunakan pelanggan. Tidak ada biaya bulanan atau biaya tersembunyi. cek disini ( /fee )',
     },
     {
         q: 'Bagaimana cara menarik dana?',
-        a: 'Anda dapat menarik dana kapan saja melalui dashboard JavaraPay ke rekening bank manapun di Indonesia dengan biaya penarikan yang sangat terjangkau.',
+        a: 'Penarikan dana di lakukan secara otomatis dan manual, Fee penarikan bervariasi tergantung status akun. Minimum penarikan Rp 50.000 bisa di lakukan setiap hari meski pada hari libur. Waktu penarikan cepat 5-20 Menit.',
     },
     {
         q: 'Apakah JavaraPay aman?',
-        a: 'Ya, JavaraPay menggunakan enkripsi standar industri dan bekerja sama dengan payment gateway terpercaya untuk memastikan setiap transaksi aman dan terlindungi.',
+        a: 'Ya. JavaraPay di bawah PT JEPARA SOLUSI TEKNOLOGI menggunakan enkripsi standar industri dan bekerja sama dengan payment gateway terpercaya untuk memastikan setiap transaksi aman dan terlindungi.',
     },
     {
-        q: 'Metode pembayaran apa saja yang didukung?',
-        a: 'JavaraPay mendukung berbagai metode pembayaran termasuk transfer bank, e-wallet (GoPay, OVO, DANA, ShopeePay), QRIS, kartu kredit/debit, dan minimarket.',
+        q: 'Metode pembayaran apa saja yang di dukung',
+        a: 'JavaraPay mendukung berbagai metode pembayaran termasuk transfer bank,virtual account, e-wallet (GoPay, OVO, DANA, ShopeePay), QRIS, kartu kredit/debit, dan minimarket.',
     },
     {
-        q: 'Apakah saya perlu memiliki badan usaha?',
+        q: 'Apakah saya perlu KYC atau dokumen usaha?',
         a: 'Tidak. JavaraPay dapat digunakan oleh siapa saja — individu, freelancer, maupun bisnis — tanpa perlu KYC atau verifikasi badan usaha.',
     },
 ];
 </script>
 
 <template>
-    <Head title="JavaraPay — Layanan Pembayaran Link Mudah">
+    <Head title="JavaraPay — Layanan Pembayaran Link Terpercaya">
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
-        <meta name="description" content="JavaraPay — Layanan pembayaran link secara mudah. Aktivasi instan, integrasi mudah, biaya rendah, penarikan murah, tanpa KYC." />
+        <meta name="description" content="JavaraPay adalah layanan payment link yang memudahkan Anda menerima pembayaran online untuk keperluan apa saja tanpa repot mengurus sistem." />
     </Head>
 
-    <div class="jp-landing">
-        <!-- NAV -->
-        <nav class="jp-nav">
-            <div class="jp-nav-inner">
-                <a href="/" class="jp-logo">
-                    <span class="jp-logo-icon">
-                        <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect width="28" height="28" rx="8" fill="url(#logo-grad)" />
-                            <path d="M8 8h4v8a4 4 0 01-4-4V8z" fill="#fff" opacity=".9"/>
-                            <path d="M14 8h6v2h-4v4a4 4 0 01-2-3.5V8z" fill="#fff" opacity=".7"/>
-                            <defs>
-                                <linearGradient id="logo-grad" x1="0" y1="0" x2="28" y2="28">
-                                    <stop stop-color="#6366f1"/>
-                                    <stop offset="1" stop-color="#8b5cf6"/>
-                                </linearGradient>
-                            </defs>
-                        </svg>
-                    </span>
-                    <span class="jp-logo-text">JavaraPay</span>
+    <div class="min-h-screen bg-slate-50 dark:bg-zinc-950 font-sans text-slate-800 dark:text-zinc-100 selection:bg-indigo-100 dark:selection:bg-indigo-900/50 selection:text-indigo-900 dark:selection:text-indigo-300">
+        
+        <!-- Navbar -->
+        <nav class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-zinc-800 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md">
+            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6 lg:px-8">
+                <a href="/" class="flex items-center gap-2 transition-opacity hover:opacity-80">
+                    <svg viewBox="0 0 28 28" fill="none" class="h-8 w-8" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="28" rx="8" fill="#6366f1" />
+                        <path d="M8 8h4v8a4 4 0 01-4-4V8z" fill="#fff" opacity=".9"/>
+                        <path d="M14 8h6v2h-4v4a4 4 0 01-2-3.5V8z" fill="#fff" opacity=".7"/>
+                    </svg>
+                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">JavaraPay</span>
                 </a>
-                <div class="jp-nav-links">
-                    <Link href="/docs" class="jp-btn jp-btn-ghost">
-                        Docs
-                    </Link>
+                
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <button 
+                        @click="toggleTheme" 
+                        class="p-2 mr-2 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
+                        aria-label="Toggle Dark Mode"
+                    >
+                        <Sun v-if="isDark" class="h-5 w-5" />
+                        <Moon v-else class="h-5 w-5" />
+                    </button>
+
+                    <Link href="/fee" class="text-sm font-medium text-slate-600 dark:text-zinc-300 transition-colors hover:text-slate-900 dark:hover:text-white">Biaya</Link>
+                    <Link href="/docs" class="text-sm font-medium text-slate-600 dark:text-zinc-300 transition-colors hover:text-slate-900 dark:hover:text-white">Bantuan</Link>
+
+                    <div class="h-5 w-px bg-slate-300 dark:bg-zinc-700 hidden sm:block"></div>
+                    
                     <Link
                         v-if="$page.props.auth.user"
                         :href="route('dashboard')"
-                        class="jp-btn jp-btn-primary"
+                        class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow"
                     >
                         Dashboard
                     </Link>
                     <template v-else>
-                        <Link :href="route('login')" class="jp-btn jp-btn-ghost">
+                        <Link :href="route('login')" class="hidden text-sm font-medium text-slate-600 dark:text-zinc-300 transition-colors hover:text-slate-900 dark:hover:text-white sm:block">
                             Masuk
                         </Link>
-                        <Link :href="route('register')" class="jp-btn jp-btn-primary">
+                        <Link :href="route('register')" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow">
                             Daftar Gratis
                         </Link>
                     </template>
@@ -115,635 +142,211 @@ const faqs = [
             </div>
         </nav>
 
-        <!-- HERO -->
-        <section class="jp-hero">
-            <div class="jp-hero-glow"></div>
-            <div class="jp-hero-content">
-                <div class="jp-badge">🚀 Payment Link Platform</div>
-                <h1 class="jp-hero-title">
-                    Layanan Pembayaran Link <br/><span class="jp-gradient-text">Secara Mudah</span>
+        <!-- Hero Section -->
+        <main class="relative isolate pt-14 pb-20 sm:pt-24 lg:pb-32 overflow-hidden">
+            <!-- Gentle Background Gradient -->
+            <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80" aria-hidden="true">
+                <div class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 dark:opacity-10 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+            </div>
+
+            <div class="mx-auto max-w-4xl px-6 lg:px-8 text-center pt-8">
+                <span class="inline-flex items-center gap-2 rounded-full border border-indigo-100 dark:border-indigo-500/20 bg-indigo-50 dark:bg-indigo-500/10 px-4 py-1.5 text-sm font-semibold text-indigo-700 dark:text-indigo-400 shadow-sm leading-6">
+                    Solusi Pembayaran Modern
+                </span>
+                
+                <h1 class="mt-8 text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+                    Terima Pembayaran <br class="hidden sm:block" /> 
+                    <span class="text-indigo-600 dark:text-indigo-400">Lebih Mudah & Dekat</span>
                 </h1>
-                <p class="jp-hero-subtitle">
-                    Buat link pembayaran, bagikan ke pelanggan, dan terima uang langsung.
-                    Tanpa ribet, tanpa KYC, mulai dalam hitungan menit.
+                
+                <p class="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-slate-600 dark:text-zinc-400 leading-relaxed">
+                    Ubah cara Anda bertransaksi dengan rekan dan pelanggan. Buat link pembayaran, kirim, lalu biarkan uang masuk ke rekening Anda tanpa proses teknis yang memusingkan.
                 </p>
-                <div class="jp-hero-actions">
+
+                <div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
                     <Link
                         v-if="$page.props.auth.user"
                         :href="route('dashboard')"
-                        class="jp-btn jp-btn-hero"
+                        class="group inline-flex items-center justify-center w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900"
                     >
-                        Buka Dashboard
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Ke Dashboard Sekarang
+                        <ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                     <Link
                         v-else
                         :href="route('register')"
-                        class="jp-btn jp-btn-hero"
+                        class="group inline-flex items-center justify-center w-full sm:w-auto rounded-xl bg-indigo-600 px-6 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-indigo-700 hover:shadow-lg focus:ring-4 focus:ring-indigo-100 dark:focus:ring-indigo-900"
                     >
-                        Mulai Sekarang — Gratis
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Mulai Coba — Gratis
+                        <ArrowRight class="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </Link>
+                    <Link
+                        v-if="!$page.props.auth.user"
+                        :href="route('login')"
+                        class="w-full sm:w-auto text-base font-semibold leading-6 text-slate-700 dark:text-zinc-300 px-4 py-3 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors"
+                    >
+                        Sudah punya akun? Masuk
                     </Link>
                 </div>
-                <!-- Stats row -->
-                <div class="jp-stats">
-                    <div class="jp-stat">
-                        <span class="jp-stat-value">0%</span>
-                        <span class="jp-stat-label">Biaya Pendaftaran</span>
+            </div>
+            
+            <div class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]" aria-hidden="true">
+                <div class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-20 dark:opacity-10 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]" style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)"></div>
+            </div>
+        </main>
+
+        <!-- Brief Features Divider -->
+        <div class="border-y border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 py-12">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="grid grid-cols-1 gap-8 sm:grid-cols-3 text-center sm:text-left divide-y sm:divide-y-0 sm:divide-x divide-slate-200 dark:divide-zinc-800">
+                    <div class="flex flex-col items-center sm:items-start pt-6 sm:pt-0 sm:pr-8">
+                        <span class="text-3xl font-extrabold text-slate-900 dark:text-white">100%</span>
+                        <span class="mt-2 text-sm font-medium text-slate-500 dark:text-zinc-400 uppercase tracking-wide">Gratis Pendaftaran</span>
                     </div>
-                    <div class="jp-stat-divider"></div>
-                    <div class="jp-stat">
-                        <span class="jp-stat-value">&lt;1 mnt</span>
-                        <span class="jp-stat-label">Aktivasi Akun</span>
+                    <div class="flex flex-col items-center sm:items-start pt-6 sm:pt-0 sm:px-8 leading-6">
+                        <span class="text-3xl font-extrabold text-slate-900 dark:text-white">&lt; 2<span class="text-lg">mnt</span></span>
+                        <span class="mt-2 text-sm font-medium text-slate-500 dark:text-zinc-400 uppercase tracking-wide">Waktu Buka Akun</span>
                     </div>
-                    <div class="jp-stat-divider"></div>
-                    <div class="jp-stat">
-                        <span class="jp-stat-value">24/7</span>
-                        <span class="jp-stat-label">Sistem Online</span>
+                    <div class="flex flex-col items-center sm:items-start pt-6 sm:pt-0 sm:pl-8">
+                        <span class="text-3xl font-extrabold text-slate-900 dark:text-white">24/7</span>
+                        <span class="mt-2 text-sm font-medium text-slate-500 dark:text-zinc-400 uppercase tracking-wide">Dana Bisa Ditarik</span>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <!-- FEATURES / WHY -->
-        <section class="jp-features" id="features">
-            <div class="jp-section-inner">
-                <div class="jp-section-header">
-                    <span class="jp-section-badge">Keunggulan</span>
-                    <h2 class="jp-section-title">Mengapa <span class="jp-gradient-text">JavaraPay</span>?</h2>
-                    <p class="jp-section-desc">Semua yang Anda butuhkan untuk menerima pembayaran online dengan mudah dan efisien.</p>
+        <!-- Features Matrix -->
+        <section class="py-24 bg-slate-50 dark:bg-zinc-950" id="features">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="mx-auto max-w-2xl text-center">
+                    <h2 class="text-xl font-bold leading-7 text-indigo-600 dark:text-indigo-400">Mudah Digunakan</h2>
+                    <p class="mt-2 text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white sm:text-4xl">Sistem yang Ramah Pengguna</p>
+                    <p class="mt-4 text-lg leading-8 text-slate-600 dark:text-zinc-400">
+                        Kami menjauhkan segala hal teknis yang rumit sehingga Anda dapat sepenuhnya fokus pada bisnis dan pelanggan yang Anda layani.
+                    </p>
                 </div>
-                <div class="jp-features-grid">
-                    <div v-for="(f, i) in features" :key="i" class="jp-feature-card">
-                        <div class="jp-feature-icon">{{ f.icon }}</div>
-                        <h3 class="jp-feature-title">{{ f.title }}</h3>
-                        <p class="jp-feature-desc">{{ f.desc }}</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- HOW IT WORKS -->
-        <section class="jp-how">
-            <div class="jp-section-inner">
-                <div class="jp-section-header">
-                    <span class="jp-section-badge">Cara Kerja</span>
-                    <h2 class="jp-section-title">Tiga Langkah <span class="jp-gradient-text">Simpel</span></h2>
-                </div>
-                <div class="jp-steps">
-                    <div class="jp-step">
-                        <div class="jp-step-num">1</div>
-                        <h3>Daftar Akun</h3>
-                        <p>Buat akun JavaraPay gratis tanpa syarat KYC.</p>
-                    </div>
-                    <div class="jp-step-arrow">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <div class="jp-step">
-                        <div class="jp-step-num">2</div>
-                        <h3>Buat Payment Link</h3>
-                        <p>Tentukan nominal dan buat link pembayaran instan.</p>
-                    </div>
-                    <div class="jp-step-arrow">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    </div>
-                    <div class="jp-step">
-                        <div class="jp-step-num">3</div>
-                        <h3>Terima Pembayaran</h3>
-                        <p>Pelanggan bayar, dana masuk ke akun Anda.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- FAQ -->
-        <section class="jp-faq" id="faq">
-            <div class="jp-section-inner">
-                <div class="jp-section-header">
-                    <span class="jp-section-badge">FAQ</span>
-                    <h2 class="jp-section-title">Pertanyaan yang <span class="jp-gradient-text">Sering Ditanyakan</span></h2>
-                </div>
-                <div class="jp-faq-list">
-                    <div
-                        v-for="(faq, i) in faqs"
-                        :key="i"
-                        class="jp-faq-item"
-                        :class="{ 'is-open': openFaq === i }"
-                    >
-                        <button class="jp-faq-q" @click="toggleFaq(i)">
-                            <span>{{ faq.q }}</span>
-                            <svg class="jp-faq-chevron" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                <path d="M5 7.5L10 12.5L15 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        <div class="jp-faq-a">
-                            <p>{{ faq.a }}</p>
+                <div class="mx-auto mt-16 max-w-5xl lg:mt-20">
+                    <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-3">
+                        <div v-for="(feat, i) in features" :key="i" class="flex flex-col items-start">
+                            <div class="rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-sm p-3 mb-5 flex items-center justify-center">
+                                <component :is="feat.icon" class="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                            </div>
+                            <h3 class="text-lg font-bold leading-7 text-slate-900 dark:text-white">{{ feat.title }}</h3>
+                            <p class="mt-2 text-base leading-7 text-slate-600 dark:text-zinc-400">{{ feat.desc }}</p>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- CTA -->
-        <section class="jp-cta">
-            <div class="jp-cta-glow"></div>
-            <div class="jp-section-inner">
-                <h2 class="jp-cta-title">Siap Menerima Pembayaran?</h2>
-                <p class="jp-cta-desc">Bergabung sekarang dan mulai terima pembayaran dalam hitungan menit.</p>
-                <Link
-                    v-if="!$page.props.auth.user"
-                    :href="route('register')"
-                    class="jp-btn jp-btn-hero"
-                >
-                    Daftar Gratis Sekarang
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </Link>
-                <Link
-                    v-else
-                    :href="route('dashboard')"
-                    class="jp-btn jp-btn-hero"
-                >
-                    Buka Dashboard
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                </Link>
+        <!-- Steps Section -->
+        <section class="py-24 bg-white dark:bg-zinc-900 border-y border-slate-100 dark:border-zinc-800">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Bagaimana Cara Kerjanya?</h2>
+                <p class="mt-4 text-lg text-slate-600 dark:text-zinc-400 max-w-2xl mx-auto">Kami membuatnya sejelas mungkin untuk Anda dan pelanggan.</p>
+                
+                <div class="mt-16 grid grid-cols-1 gap-y-12 sm:grid-cols-3 sm:gap-x-12 relative">
+                    <!-- Step 1 -->
+                    <div class="relative flex flex-col items-center">
+                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">1</div>
+                        <h3 class="mt-6 text-lg font-bold text-slate-900 dark:text-white">Daftar Tanpa Syarat</h3>
+                        <p class="mt-2 text-slate-600 dark:text-zinc-400">Buat akun dengan gampang, cukup bermodalkan email aktif.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative flex flex-col items-center">
+                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">2</div>
+                        <h3 class="mt-6 text-lg font-bold text-slate-900 dark:text-white">Buat Link Sekali Klik</h3>
+                        <p class="mt-2 text-slate-600 dark:text-zinc-400">Isi besaran form tagihan, lalu Anda akan langsung dapat link.</p>
+                    </div>
+                    <!-- Step 3 -->
+                    <div class="relative flex flex-col items-center">
+                        <div class="z-10 flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 dark:bg-indigo-500/10 border-2 border-indigo-200 dark:border-indigo-500/20 text-xl font-bold text-indigo-600 dark:text-indigo-400 shadow-sm">3</div>
+                        <h3 class="mt-6 text-lg font-bold text-slate-900 dark:text-white">Uang Langsung Cair</h3>
+                        <p class="mt-2 text-slate-600 dark:text-zinc-400">Ketika pelanggan membayar, dana otomatis masuk dan bisa dicek real-time.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- FOOTER -->
-        <footer class="jp-footer">
-            <div class="jp-footer-inner">
-                <p>&copy; {{ new Date().getFullYear() }} JavaraPay. All rights reserved.</p>
+        <!-- FAQ Section -->
+        <section class="py-24 bg-slate-50 dark:bg-zinc-950" id="faq">
+            <div class="mx-auto max-w-4xl px-6 lg:px-8">
+                <div class="text-center mb-14">
+                    <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">Hal yang Sering Ditanyakan</h2>
+                </div>
+                
+                <div class="space-y-4">
+                    <div 
+                        v-for="(faq, i) in faqs" 
+                        :key="i"
+                        class="overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 border shadow-sm transition-all duration-200"
+                        :class="openFaq === i ? 'ring-2 ring-indigo-500 border-transparent dark:border-transparent shadow-md' : 'border-slate-200 dark:border-zinc-800 hover:border-slate-300 dark:hover:border-zinc-700'"
+                    >
+                        <button 
+                            @click="toggleFaq(i)"
+                            class="flex w-full items-center justify-between px-6 py-5 text-left focus:outline-none"
+                        >
+                            <span class="text-[1.05rem] font-bold text-slate-900 dark:text-white">{{ faq.q }}</span>
+                            <span class="ml-6 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-500 dark:text-zinc-400">
+                                <ChevronDown v-if="openFaq !== i" class="h-4 w-4" />
+                                <ChevronUp v-else class="h-4 w-4" />
+                            </span>
+                        </button>
+                        <div 
+                            v-show="openFaq === i"
+                            class="px-6 pb-6 pt-0"
+                        >
+                            <p class="text-slate-600 dark:text-zinc-400 leading-relaxed">{{ faq.a }}</p>
+                            <!-- If linking to fee explicitly from the text mentioned -->
+                            <div v-if="faq.a.includes('(/fee)') || faq.a.includes('( /fee )')" class="mt-3">
+                                <Link href="/fee" class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-semibold text-sm flex items-center gap-1">
+                                    Cek simulasi biaya di sini <ArrowRight class="h-4 w-4" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pre-footer CTA -->
+        <div class="bg-indigo-600 dark:bg-indigo-700">
+            <div class="mx-auto max-w-7xl px-6 py-16 sm:py-20 lg:px-8 lg:py-24 text-center">
+                <h2 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    <span class="block">Masih mencari layanan yang tepat?</span>
+                    <span class="block mt-2 opacity-90 text-2xl font-medium">Buktikan kemudahan JavaraPay sekarang juga.</span>
+                </h2>
+                <div class="mt-10 flex items-center justify-center gap-4">
+                    <Link
+                        v-if="!$page.props.auth.user"
+                        :href="route('register')"
+                        class="inline-flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 px-8 py-3.5 text-base font-bold text-indigo-700 dark:text-white shadow-md transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800"
+                    >
+                        Buat Akun Anda
+                    </Link>
+                    <Link
+                        v-else
+                        :href="route('dashboard')"
+                        class="inline-flex items-center justify-center rounded-xl bg-white dark:bg-zinc-900 px-8 py-3.5 text-base font-bold text-indigo-700 dark:text-white shadow-md transition-colors hover:bg-slate-50 dark:hover:bg-zinc-800"
+                    >
+                        Alat Pembayaran
+                    </Link>
+                </div>
+            </div>
+        </div>
+
+        <!-- Minimal Footer -->
+        <footer class="bg-white dark:bg-zinc-950 py-10 border-t border-slate-200 dark:border-zinc-800">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2 opacity-60 grayscale dark:opacity-80">
+                    <svg viewBox="0 0 28 28" fill="none" class="h-6 w-6" xmlns="http://www.w3.org/2000/svg"><rect width="28" height="28" rx="8" fill="#6366f1" /><path d="M8 8h4v8a4 4 0 01-4-4V8z" fill="#fff" opacity=".9"/><path d="M14 8h6v2h-4v4a4 4 0 01-2-3.5V8z" fill="#fff" opacity=".7"/></svg>
+                    <span class="font-bold text-slate-800 dark:text-zinc-400">JavaraPay</span>
+                </div>
+                <p class="text-sm text-slate-500 dark:text-zinc-500">
+                    &copy; {{ new Date().getFullYear() }} PT Jepara Solusi Teknologi. All rights reserved.
+                </p>
             </div>
         </footer>
+
     </div>
 </template>
-
-<style scoped>
-/* ===== BASE ===== */
-.jp-landing {
-    --jp-bg: #0b0d17;
-    --jp-surface: #12152480;
-    --jp-border: rgba(255,255,255,0.06);
-    --jp-text: #e2e8f0;
-    --jp-muted: #94a3b8;
-    --jp-accent-1: #6366f1;
-    --jp-accent-2: #8b5cf6;
-    --jp-accent-3: #a78bfa;
-
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    background: var(--jp-bg);
-    color: var(--jp-text);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* ===== NAV ===== */
-.jp-nav {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    backdrop-filter: blur(20px) saturate(180%);
-    background: rgba(11, 13, 23, 0.8);
-    border-bottom: 1px solid var(--jp-border);
-}
-.jp-nav-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    height: 64px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.jp-logo {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    text-decoration: none;
-    color: #fff;
-}
-.jp-logo-icon svg {
-    width: 32px;
-    height: 32px;
-}
-.jp-logo-text {
-    font-weight: 800;
-    font-size: 1.25rem;
-    letter-spacing: -0.02em;
-}
-.jp-nav-links {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-/* ===== BUTTONS ===== */
-.jp-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.55rem 1.25rem;
-    border-radius: 10px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    border: none;
-    white-space: nowrap;
-}
-.jp-btn-ghost {
-    color: var(--jp-muted);
-    background: transparent;
-}
-.jp-btn-ghost:hover {
-    color: #fff;
-}
-.jp-btn-primary {
-    background: linear-gradient(135deg, var(--jp-accent-1), var(--jp-accent-2));
-    color: #fff;
-    box-shadow: 0 0 20px rgba(99,102,241,0.3);
-}
-.jp-btn-primary:hover {
-    box-shadow: 0 0 30px rgba(99,102,241,0.5);
-    transform: translateY(-1px);
-}
-.jp-btn-hero {
-    background: linear-gradient(135deg, var(--jp-accent-1), var(--jp-accent-2));
-    color: #fff;
-    padding: 0.85rem 2rem;
-    font-size: 1rem;
-    border-radius: 14px;
-    box-shadow: 0 0 40px rgba(99,102,241,0.35);
-}
-.jp-btn-hero:hover {
-    box-shadow: 0 0 60px rgba(99,102,241,0.55);
-    transform: translateY(-2px);
-}
-
-/* ===== HERO ===== */
-.jp-hero {
-    position: relative;
-    padding: 6rem 1.5rem 4rem;
-    text-align: center;
-    overflow: hidden;
-}
-.jp-hero-glow {
-    position: absolute;
-    top: -180px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
-    pointer-events: none;
-}
-.jp-hero-content {
-    position: relative;
-    max-width: 720px;
-    margin: 0 auto;
-}
-.jp-badge {
-    display: inline-block;
-    padding: 0.35rem 1rem;
-    border-radius: 100px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    background: rgba(99,102,241,0.12);
-    color: var(--jp-accent-3);
-    border: 1px solid rgba(99,102,241,0.2);
-    margin-bottom: 1.5rem;
-}
-.jp-hero-title {
-    font-size: clamp(2.2rem, 5vw, 3.5rem);
-    font-weight: 900;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-    color: #fff;
-    margin-bottom: 1.25rem;
-}
-.jp-gradient-text {
-    background: linear-gradient(135deg, var(--jp-accent-1), var(--jp-accent-3), #c4b5fd);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.jp-hero-subtitle {
-    font-size: 1.1rem;
-    color: var(--jp-muted);
-    line-height: 1.7;
-    max-width: 560px;
-    margin: 0 auto 2rem;
-}
-.jp-hero-actions {
-    margin-bottom: 3rem;
-}
-
-/* ===== STATS ===== */
-.jp-stats {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-}
-.jp-stat {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.25rem;
-}
-.jp-stat-value {
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #fff;
-}
-.jp-stat-label {
-    font-size: 0.8rem;
-    color: var(--jp-muted);
-}
-.jp-stat-divider {
-    width: 1px;
-    height: 40px;
-    background: var(--jp-border);
-}
-
-/* ===== SECTIONS ===== */
-.jp-section-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-}
-.jp-section-header {
-    text-align: center;
-    margin-bottom: 3.5rem;
-}
-.jp-section-badge {
-    display: inline-block;
-    padding: 0.3rem 0.85rem;
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--jp-accent-3);
-    background: rgba(99,102,241,0.1);
-    border: 1px solid rgba(99,102,241,0.15);
-    margin-bottom: 1rem;
-}
-.jp-section-title {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: -0.02em;
-    margin-bottom: 0.75rem;
-}
-.jp-section-desc {
-    font-size: 1.05rem;
-    color: var(--jp-muted);
-    max-width: 540px;
-    margin: 0 auto;
-    line-height: 1.65;
-}
-
-/* ===== FEATURES ===== */
-.jp-features {
-    padding: 5rem 0;
-}
-.jp-features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.25rem;
-}
-.jp-feature-card {
-    background: var(--jp-surface);
-    border: 1px solid var(--jp-border);
-    border-radius: 16px;
-    padding: 2rem 1.75rem;
-    transition: all 0.3s ease;
-}
-.jp-feature-card:hover {
-    border-color: rgba(99,102,241,0.25);
-    background: rgba(99,102,241,0.05);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 40px rgba(99,102,241,0.1);
-}
-.jp-feature-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    width: 52px;
-    height: 52px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 14px;
-    background: rgba(99,102,241,0.08);
-}
-.jp-feature-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 0.5rem;
-}
-.jp-feature-desc {
-    font-size: 0.925rem;
-    color: var(--jp-muted);
-    line-height: 1.6;
-}
-
-/* ===== HOW IT WORKS ===== */
-.jp-how {
-    padding: 5rem 0;
-}
-.jp-steps {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-.jp-step {
-    flex: 1;
-    min-width: 200px;
-    max-width: 280px;
-    text-align: center;
-    padding: 2rem 1.25rem;
-    background: var(--jp-surface);
-    border: 1px solid var(--jp-border);
-    border-radius: 16px;
-    transition: all 0.3s ease;
-}
-.jp-step:hover {
-    border-color: rgba(99,102,241,0.25);
-    transform: translateY(-3px);
-}
-.jp-step-num {
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    background: linear-gradient(135deg, var(--jp-accent-1), var(--jp-accent-2));
-    color: #fff;
-    font-weight: 800;
-    font-size: 1.1rem;
-    margin: 0 auto 1rem;
-}
-.jp-step h3 {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 0.5rem;
-}
-.jp-step p {
-    font-size: 0.9rem;
-    color: var(--jp-muted);
-    line-height: 1.55;
-}
-.jp-step-arrow {
-    display: flex;
-    align-items: center;
-    padding-top: 3rem;
-    color: var(--jp-accent-3);
-    opacity: 0.4;
-}
-@media (max-width: 768px) {
-    .jp-step-arrow {
-        display: none;
-    }
-}
-
-/* ===== FAQ ===== */
-.jp-faq {
-    padding: 5rem 0;
-}
-.jp-faq-list {
-    max-width: 700px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-}
-.jp-faq-item {
-    background: var(--jp-surface);
-    border: 1px solid var(--jp-border);
-    border-radius: 14px;
-    overflow: hidden;
-    transition: border-color 0.3s ease;
-}
-.jp-faq-item:hover {
-    border-color: rgba(99,102,241,0.2);
-}
-.jp-faq-item.is-open {
-    border-color: rgba(99,102,241,0.3);
-}
-.jp-faq-q {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1.15rem 1.5rem;
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 0.975rem;
-    font-weight: 600;
-    text-align: left;
-    cursor: pointer;
-    font-family: inherit;
-    transition: color 0.2s ease;
-}
-.jp-faq-q:hover {
-    color: var(--jp-accent-3);
-}
-.jp-faq-chevron {
-    flex-shrink: 0;
-    color: var(--jp-muted);
-    transition: transform 0.3s ease;
-}
-.jp-faq-item.is-open .jp-faq-chevron {
-    transform: rotate(180deg);
-}
-.jp-faq-a {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s ease, padding 0.35s ease;
-    padding: 0 1.5rem;
-}
-.jp-faq-item.is-open .jp-faq-a {
-    max-height: 300px;
-    padding: 0 1.5rem 1.25rem;
-}
-.jp-faq-a p {
-    font-size: 0.925rem;
-    color: var(--jp-muted);
-    line-height: 1.7;
-}
-
-/* ===== CTA ===== */
-.jp-cta {
-    position: relative;
-    padding: 5rem 1.5rem;
-    text-align: center;
-    overflow: hidden;
-}
-.jp-cta-glow {
-    position: absolute;
-    bottom: -100px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
-    pointer-events: none;
-}
-.jp-cta-title {
-    font-size: clamp(1.8rem, 4vw, 2.5rem);
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 0.75rem;
-    position: relative;
-}
-.jp-cta-desc {
-    font-size: 1.05rem;
-    color: var(--jp-muted);
-    margin-bottom: 2rem;
-    position: relative;
-}
-
-/* ===== FOOTER ===== */
-.jp-footer {
-    border-top: 1px solid var(--jp-border);
-    padding: 2rem 1.5rem;
-}
-.jp-footer-inner {
-    max-width: 1100px;
-    margin: 0 auto;
-    text-align: center;
-}
-.jp-footer-inner p {
-    font-size: 0.85rem;
-    color: var(--jp-muted);
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 640px) {
-    .jp-hero {
-        padding: 4rem 1rem 3rem;
-    }
-    .jp-hero-subtitle {
-        font-size: 1rem;
-    }
-    .jp-stats {
-        gap: 1rem;
-    }
-    .jp-stat-divider {
-        height: 30px;
-    }
-    .jp-features-grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
