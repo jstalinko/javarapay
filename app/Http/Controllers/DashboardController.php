@@ -52,7 +52,11 @@ class DashboardController extends Controller
 
     public function project()
     {
-        $projects = \App\Models\Project::orderBy('id', 'desc')->get();
+        if(auth()->user()->role != 'admin'){
+           $projects = \App\Models\Project::where('user_id', auth()->id())->orderBy('id', 'desc')->get();
+        }else{
+            $projects = \App\Models\Project::orderBy('id', 'desc')->get();
+        }
         return Inertia::render('Project', [
             'projects' => $projects
         ]);
