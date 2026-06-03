@@ -62,6 +62,12 @@ Route::group(['prefix' => 'dashboard' , 'middleware' => ['auth']] , function(){
         Route::post('/announcements', [AdminController::class, 'storeAnnouncement'])->name('dashboard.admin.announcement.store');
         Route::post('/announcements/{announcement}/update', [AdminController::class, 'updateAnnouncement'])->name('dashboard.admin.announcement.update');
         Route::delete('/announcements/{announcement}', [AdminController::class, 'deleteAnnouncement'])->name('dashboard.admin.announcement.delete');
+
+        Route::get('/payment-channels' , [AdminController::class,'paymentChannel'])->name('dashboard.admin.payment-channels');
+        Route::post('/payment-channels' , [AdminController::class,'storePaymentChannel'])->name('dashboard.admin.payment-channels.store');
+        Route::post('/payment-channels/sync' , [AdminController::class,'syncAllProjectsChannels'])->name('dashboard.admin.payment-channels.sync');
+        Route::post('/payment-channels/{id}/update' , [AdminController::class,'updatePaymentChannel'])->name('dashboard.admin.payment-channels.update');
+        Route::delete('/payment-channels/{id}' , [AdminController::class,'deletePaymentChannel'])->name('dashboard.admin.payment-channels.delete');
     })->middleware('admin');
 });
 

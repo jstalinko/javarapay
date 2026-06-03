@@ -223,4 +223,167 @@ class AdminController extends Controller
         $announcement->delete();
         return back()->with('success', 'Announcement deleted successfully.');
     }
+
+    public function paymentChannel(Request $request)
+    {
+        return Inertia::render('Admin/PaymentChannels', [
+            'paymentChannels' => \App\Models\PaymentMethod::all()
+        ]);
+    }
+
+    public function syncAllProjectsChannels()
+    {
+        $this->performSync();
+        return back()->with('success', 'All project channels synchronized successfully.');
+    }
+
+    protected function performSync()
+    {
+        $allMethods = \App\Models\PaymentMethod::all();
+        $projects = \App\Models\Project::all();
+
+        foreach ($projects as $project) {
+            $currentChannels = $project->channels ?: [];
+            $newChannels = [];
+
+            foreach ($allMethods as $method) {
+                // If globally inactive, exclude from project channels
+                if (!$method->active) {
+                    continue;
+                }
+
+                $existing = collect($currentChannels)->firstWhere('method_code', $method->method_code);
+
+                $newChannels[] = [
+                    'method_code' => $method->method_code,
+                    'method_name' => $method->method_name,
+                    'group'       => $method->group,
+                    'image'       => $method->image,
+                    'fee_percent' => (string) $method->fee_percent,
+                    'fee_flat'    => (int) $method->fee_flat,
+                    'min_amount'  => $method->min_amount !== null ? (int) $method->min_amount : null,
+                    'max_amount'  => $method->max_amount !== null ? (int) $method->max_amount : null,
+                    'active'      => $existing ? (bool)($existing['active'] ?? true) : true
+                ];
+            }
+
+            $project->update([
+                'channels' => $newChannels
+            ]);
+        }
+    }
+
+    public function storePaymentChannel(Request $request)
+    {
+        $request->validate([
+            'group' => 'nullable|string|max:255',
+            'method_code' => 'required|string|max:255|unique:payment_methods,method_code',
+            'method_name' => 'required|string|max:255',
+            'gateway' => 'required|string|max:255',
+            'image' => 'nullable|string|max:255',
+            'image_file' => 'nullable|image|max:2048',
+            'description' => 'nullable|string',
+            'is_qris' => 'boolean',
+            'min_amount' => 'nullable|integer|min:0',
+            'max_amount' => 'nullable|integer|min:0',
+            'fee_percent' => 'required|numeric|min:0|max:100',
+            'fee_flat' => 'required|integer|min:0',
+            'active' => 'boolean',
+        ]);
+
+        $imagePath = $request->image;
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $dir = public_path('images/channels');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $file->move($dir, $fileName);
+            $imagePath = 'images/channels/' . $fileName;
+        }
+
+        \App\Models\PaymentMethod::create([
+            'group' => $request->group,
+            'method_code' => $request->method_code,
+            'method_name' => $request->method_name,
+            'gateway' => $request->gateway,
+            'image' => $imagePath,
+            'description' => $request->description,
+            'is_qris' => $request->boolean('is_qris'),
+            'min_amount' => $request->min_amount,
+            'max_amount' => $request->max_amount,
+            'fee_percent' => $request->fee_percent,
+            'fee_flat' => $request->fee_flat,
+            'active' => $request->boolean('active'),
+            'destination' => 'automatic',
+            'destination_name' => 'automatic',
+        ]);
+
+        $this->performSync();
+
+        return back()->with('success', 'Payment channel created successfully.');
+    }
+
+    public function updatePaymentChannel(Request $request, $id)
+    {
+        $paymentChannel = \App\Models\PaymentMethod::findOrFail($id);
+
+        $request->validate([
+            'group' => 'nullable|string|max:255',
+            'method_code' => 'required|string|max:255|unique:payment_methods,method_code,' . $paymentChannel->id,
+            'method_name' => 'required|string|max:255',
+            'gateway' => 'required|string|max:255',
+            'image' => 'nullable|string|max:255',
+            'image_file' => 'nullable|image|max:2048',
+            'description' => 'nullable|string',
+            'is_qris' => 'boolean',
+            'min_amount' => 'nullable|integer|min:0',
+            'max_amount' => 'nullable|integer|min:0',
+            'fee_percent' => 'required|numeric|min:0|max:100',
+            'fee_flat' => 'required|integer|min:0',
+            'active' => 'boolean',
+        ]);
+
+        $imagePath = $request->image;
+        if ($request->hasFile('image_file')) {
+            $file = $request->file('image_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $dir = public_path('images/channels');
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            $file->move($dir, $fileName);
+            $imagePath = 'images/channels/' . $fileName;
+        }
+
+        $paymentChannel->update([
+            'group' => $request->group,
+            'method_code' => $request->method_code,
+            'method_name' => $request->method_name,
+            'gateway' => $request->gateway,
+            'image' => $imagePath,
+            'description' => $request->description,
+            'is_qris' => $request->boolean('is_qris'),
+            'min_amount' => $request->min_amount,
+            'max_amount' => $request->max_amount,
+            'fee_percent' => $request->fee_percent,
+            'fee_flat' => $request->fee_flat,
+            'active' => $request->boolean('active'),
+        ]);
+
+        $this->performSync();
+
+        return back()->with('success', 'Payment channel updated successfully.');
+    }
+
+    public function deletePaymentChannel($id)
+    {
+        $paymentChannel = \App\Models\PaymentMethod::findOrFail($id);
+        $paymentChannel->delete();
+
+        $this->performSync();
+
+        return back()->with('success', 'Payment channel deleted successfully.');
+    }
 }

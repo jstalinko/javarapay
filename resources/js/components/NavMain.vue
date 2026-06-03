@@ -27,6 +27,11 @@ const adminMenus: NavItem[] = [
         icon: BoxSelect
     },
     {
+        title:'Payment Channels',
+        href:'/dashboard/admin/payment-channels',
+        icon:Banknote
+    },
+    {
         title: 'User Management',
         href: '/dashboard/admin/user-management',
         icon: User
