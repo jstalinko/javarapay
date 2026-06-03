@@ -89,6 +89,23 @@ const formatDate = (dateString: string) => {
     });
 };
 
+const getStatusBadge = (status: string | null | undefined) => {
+    if (!status) {
+        return { text: 'PENDING', class: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800' };
+    }
+    
+    const s = status.toUpperCase();
+    if (s === 'PAID' || s === 'SETTLED') {
+        return { text: s, class: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800' };
+    }
+    
+    if (s === 'UNPAID') {
+        return { text: s, class: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800' };
+    }
+    
+    return { text: s, class: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' };
+};
+
 const copyToClipboard = (order: any) => {
     const url = `${window.location.origin}/payment/${order.project_id}/${order.txid}`;
     navigator.clipboard.writeText(url);
@@ -198,6 +215,7 @@ const closeAnnouncementModal = () => {
                                             <th class="h-10 px-6 align-middle">Project</th>
                                             <th class="h-10 px-6 align-middle">Amount</th>
                                             <th class="h-10 px-6 align-middle">Note</th>
+                                            <th class="h-10 px-6 align-middle text-center">Status</th>
                                             <th class="h-10 px-6 align-middle text-right">Date</th>
                                             <th class="h-10 px-6 align-middle text-right">Action</th>
                                         </tr>
@@ -208,6 +226,11 @@ const closeAnnouncementModal = () => {
                                             <td class="px-6 py-4 align-middle font-semibold text-primary">{{ formatIDR(order.amount) }}</td>
                                             <td class="px-6 py-4 align-middle truncate max-w-[200px]" :title="order.note">
                                                 <span class="text-muted-foreground">{{ order.note || '—' }}</span>
+                                            </td>
+                                            <td class="px-6 py-4 align-middle text-center">
+                                                <span :class="['inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold', getStatusBadge(order.transaction?.status).class]">
+                                                    {{ getStatusBadge(order.transaction?.status).text }}
+                                                </span>
                                             </td>
                                             <td class="px-6 py-4 align-middle text-right text-muted-foreground whitespace-nowrap">{{ formatDate(order.created_at) }}</td>
                                             <td class="px-6 py-4 align-middle text-right">
@@ -222,7 +245,7 @@ const closeAnnouncementModal = () => {
                                             </td>
                                         </tr>
                                         <tr v-if="orders.data.length === 0">
-                                            <td colspan="5" class="p-12 text-center text-muted-foreground">No payment links created yet.</td>
+                                            <td colspan="6" class="p-12 text-center text-muted-foreground">No payment links created yet.</td>
                                         </tr>
                                     </tbody>
                                 </table>

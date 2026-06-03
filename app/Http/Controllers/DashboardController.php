@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         $orders = \App\Models\Order::where('user_id', $userId)
             ->where('created_at', '>=', now()->subHours(24))
-            ->with('project')
+            ->with(['project', 'transaction'])
             ->orderBy('created_at', 'desc')
             ->paginate(5); // Smaller page size for dashboard view
 
