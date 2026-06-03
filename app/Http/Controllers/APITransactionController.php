@@ -170,7 +170,7 @@ class APITransactionController extends Controller
         $transaction->reference = $tx['reference'] ?? null;
         $transaction->pay_code = $tx['pay_code'] ?? null;
         $transaction->pay_url = $tx['pay_url'] ?? null;
-        $transaction->expired_at = $tx['expired_time'] ?? null;
+        $transaction->expired_at = isset($tx['expired_time']) ? date('Y-m-d H:i:s', $tx['expired_time']) : null;
         $transaction->save();
 
 
