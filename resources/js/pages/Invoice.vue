@@ -129,7 +129,7 @@ const copyToClipboard = (text: string) => {
                             <div v-if="transaction.qr_url" class="flex flex-col items-center space-y-3 pt-4 border-t border-sidebar-border/30">
                                 <span class="text-[10px] text-muted-foreground font-bold uppercase tracking-tight">Scan QRIS</span>
                                 <div class="bg-white p-3 rounded-2xl border-4 border-primary/10 shadow-lg">
-                                    <img :src="transaction.qr_url" alt="QR Code" class="w-48 h-48" />
+                                    <img :src="`/storage/`+transaction.qr_url" alt="QR Code" class="w-48 h-48" />
                                 </div>
                                 <p class="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">Bisa discan dengan semua aplikasi pembayaran</p>
                             </div>

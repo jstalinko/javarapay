@@ -15,7 +15,9 @@ Route::get('/', function () {
 })->name('home');
 Route::get('/payment/{project_id}/{txid}' , [OrderController::class,'invoice'])->name('payment.invoice');
 Route::post('/payment/{project_id}/{txid}/pay', [OrderController::class, 'pay'])->name('payment.pay');
-
+Route::get('/fee',function(){
+    return Inertia::render('Fee');
+})->name('fee');
 
 Route::group(['prefix' => 'docs'] , function()
 {
