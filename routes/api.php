@@ -13,14 +13,6 @@ Route::get('/user', function (Request $request) {
 
 Route::post('/webhook' , WebhookController::class)->name('api.webhook');
 
-Route::get('/create-payment', function () {
-    $pakasir = new PakasirService();
-
-    $tx = $pakasir->createTransaction('qris', 'XX12111XX', 1000);
-
-    return $tx;
-});
-
 Route::middleware('auth.javarapay')->group(function () {
 
     Route::group(['prefix' => 'transaction'], function () {

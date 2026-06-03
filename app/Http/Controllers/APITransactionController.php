@@ -131,6 +131,49 @@ class APITransactionController extends Controller
 
         $transaction->save();
 
+        $checkout_url = null;
+        $qr_url = null;
+
+        if(isset($tx['checkout_url']))
+        {
+            // checkout url to url('/)
+            $checkout_url = url('/payment/'. $project->id .'/'. $transaction->txid);
+        }
+        if(isset($tx['qr_url']))
+        {
+            // download original $tx['qr_url'] to /storage/app/public/qrs/{$transaction->txid}.png
+            // save url to $transaction->qr_url
+
+
+            $qrContent = file_get_contents($tx['qr_url']);
+            
+            // Define directory and filename
+            $dir = storage_path('app/public/qrs');
+            $fileName = $transaction->txid . '.png';
+            $filePath = $dir . '/' . $fileName;
+
+            // Ensure directory exists
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            // Save file
+            if (file_put_contents($filePath, $qrContent) !== false) {
+                $transaction->qr_url = 'qrs/' . $fileName;
+            } else {
+                Log::error('Failed to save QR image', [
+                    'txid' => $transaction->txid,
+                    'url' => $tx['qr_url']
+                ]);
+            }
+        }
+        $transaction->reference = $tx['reference'] ?? null;
+        $transaction->pay_code = $tx['pay_code'] ?? null;
+        $transaction->pay_url = $tx['pay_url'] ?? null;
+        $transaction->expired_at = $tx['expired_time'] ?? null;
+        $transaction->save();
+
+
 
         return response()->json([
             'success' => true,
@@ -144,12 +187,11 @@ class APITransactionController extends Controller
                 'payment_method_code' => $transaction->payment_method_code,
                 'payment_method_name' => $transaction->payment_method_name,
                 'status'              => $transaction->status,
-                'pay_url'             => $tx['pay_url'] ?? null,
+                'pay_url'             => $checkout_url,
                 'pay_code'            => $tx['pay_code'] ?? null,
-                'qr_url'              => $tx['qr_url'] ?? null,
-                'checkout_url'        => $tx['checkout_url'] ?? null,
+                'qr_url'              => $qr_url,
                 'reference'           => $tx['reference'] ?? null,
-                'expired_time'        => $tx['expired_time'] ?? null,
+                'expired_at'          => $tx['expired_time'] ?? null,
             ],
         ]);
     }
