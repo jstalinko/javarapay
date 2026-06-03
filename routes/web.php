@@ -41,6 +41,7 @@ Route::group(['prefix' => 'dashboard' , 'middleware' => ['auth']] , function(){
 
     Route::post('/order' , [OrderController::class,'store'])->name('dashboard.order.store');
     Route::get('/webhook' , [DashboardController::class,'webhook'])->name('dashboard.webhook');
+    Route::post('/webhook/{id}/resend' , [DashboardController::class,'resendWebhook'])->name('dashboard.webhook.resend');
 
     Route::group(['prefix' => 'admin'], function() {
         Route::get('/', [AdminController::class, 'index'])->name('dashboard.admin');

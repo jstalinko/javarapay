@@ -54,6 +54,7 @@ const sections = [
     { id: 'api-integration', label: 'Integrasi via API', icon: Code2 },
     { id: 'payment-channels', label: 'Channel Pembayaran', icon: Server, indent: true },
     { id: 'create-transaction', label: 'Buat Transaksi', icon: FileJson, indent: true },
+    { id: 'detail-transaction', label: 'Detail Transaksi', icon: Terminal, indent: true },
 ];
 
 const scrollToSection = (id: string) => {
@@ -81,9 +82,11 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 const apiBase = 'https://pay.javara.digital/api/';
 const channelEndpoint = 'https://pay.javara.digital/api/channel';
 const createEndpoint = 'https://pay.javara.digital/api/transaction/create';
+const detailEndpoint = 'https://pay.javara.digital/api/transaction/detail/{txid}';
 
 const activeTabChannel = ref('curl');
 const activeTabCreate = ref('curl');
+const activeTabDetail = ref('curl');
 
 const channelCurl = `curl -X GET "${channelEndpoint}" \\
   -H "X-JAVARAPAY-API: YOUR_API_KEY" \\
@@ -184,6 +187,105 @@ let config = {
     'Content-Type': 'application/json'
   },
   data: data
+};
+
+axios.request(config)
+.then((response) => {
+  console.log(JSON.stringify(response.data));
+})
+.catch((error) => {
+  console.log(error);
+});`;
+
+const channelResponse = `{
+  "success": true,
+  "data": [
+    {
+      "method_code": "qris",
+      "method_name": "QRIS",
+      "group": "E-Wallet",
+      "image": "https://pay.javara.digital/images/channels/qris.png",
+      "fee_percent": 0.7,
+      "fee_flat": 0,
+      "min_amount": 1000,
+      "max_amount": 50000000
+    }
+  ]
+}`;
+
+const createResponse = `{
+  "success": true,
+  "message": "Transaction created successfully.",
+  "data": {
+    "txid": "JP12345678",
+    "merchant_ref": "INV-001",
+    "amount": 10000,
+    "total_fee": 1000,
+    "total_amount": 11000,
+    "payment_method_code": "qris",
+    "payment_method_name": "QRIS",
+    "status": "UNPAID",
+    "pay_url": "https://pay.javara.digital/payment/1/JP12345678",
+    "pay_code": null,
+    "qr_url": null,
+    "reference": "REF987654321",
+    "expired_at": 1780490400
+  }
+}`;
+
+const detailResponse = `{
+  "success": true,
+  "data": {
+    "txid": "JP12345678",
+    "merchant_ref": "INV-001",
+    "amount": 10000,
+    "total_fee": 1000,
+    "total_amount": 11000,
+    "payment_method_code": "qris",
+    "payment_method_name": "QRIS",
+    "notes": "Pembayaran invoice INV-001",
+    "status": "UNPAID",
+    "paid_at": null,
+    "settled_at": null,
+    "created_at": "2026-06-03T12:58:12.000000Z"
+  }
+}`;
+
+const detailCurl = `curl -X GET "${detailEndpoint.replace('{txid}', 'JP12345678')}" \\
+  -H "X-JAVARAPAY-API: YOUR_API_KEY" \\
+  -H "X-JAVARAPAY-MERCHANT-CODE: YOUR_MERCHANT_CODE"`;
+
+const detailPhp = `<?php
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => '${detailEndpoint.replace('{txid}', 'JP12345678')}',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'GET',
+  CURLOPT_HTTPHEADER => array(
+    'X-JAVARAPAY-API: YOUR_API_KEY',
+    'X-JAVARAPAY-MERCHANT-CODE: YOUR_MERCHANT_CODE'
+  ),
+));
+
+$response = curl_exec($curl);
+curl_close($curl);
+echo $response;`;
+
+const detailNode = `const axios = require('axios');
+
+let config = {
+  method: 'get',
+  url: '${detailEndpoint.replace('{txid}', 'JP12345678')}',
+  headers: { 
+    'X-JAVARAPAY-API': 'YOUR_API_KEY', 
+    'X-JAVARAPAY-MERCHANT-CODE': 'YOUR_MERCHANT_CODE'
+  }
 };
 
 axios.request(config)
@@ -533,6 +635,24 @@ axios.request(config)
                             <pre v-show="activeTabChannel === 'php'" class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ channelPhp }}</code></pre>
                             <pre v-show="activeTabChannel === 'node'" class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ channelNode }}</code></pre>
                         </div>
+
+                        <!-- Response Body -->
+                        <div class="mt-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-[#0f0f12] overflow-hidden">
+                            <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-white/[0.02] px-4 py-3">
+                                <div class="flex items-center gap-2">
+                                    <FileJson class="h-3.5 w-3.5 text-slate-500 dark:text-zinc-500" />
+                                    <span class="text-[11px] font-medium text-slate-600 dark:text-zinc-400">Response Body (JSON)</span>
+                                </div>
+                                <button
+                                    @click="copyToClipboard(channelResponse, 'channel-response')"
+                                    class="flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-zinc-400 transition-all hover:border-slate-300 dark:hover:border-zinc-600 hover:text-slate-900 dark:hover:text-zinc-200 shadow-sm"
+                                >
+                                    <component :is="copiedId === 'channel-response' ? Check : Copy" class="h-3 w-3" :class="copiedId === 'channel-response' ? 'text-indigo-600 dark:text-indigo-400' : ''" />
+                                    {{ copiedId === 'channel-response' ? 'Disalin!' : 'Salin' }}
+                                </button>
+                            </div>
+                            <pre class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ channelResponse }}</code></pre>
+                        </div>
                     </section>
 
                     <!-- ─── CREATE TRANSACTION ─── -->
@@ -604,6 +724,24 @@ axios.request(config)
                             <pre v-show="activeTabCreate === 'node'" class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ createNode }}</code></pre>
                         </div>
 
+                        <!-- Response Body -->
+                        <div class="mt-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-[#0f0f12] overflow-hidden">
+                            <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-white/[0.02] px-4 py-3">
+                                <div class="flex items-center gap-2">
+                                    <FileJson class="h-3.5 w-3.5 text-slate-500 dark:text-zinc-500" />
+                                    <span class="text-[11px] font-medium text-slate-600 dark:text-zinc-400">Response Body (JSON)</span>
+                                </div>
+                                <button
+                                    @click="copyToClipboard(createResponse, 'create-response')"
+                                    class="flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-zinc-400 transition-all hover:border-slate-300 dark:hover:border-zinc-600 hover:text-slate-900 dark:hover:text-zinc-200 shadow-sm"
+                                >
+                                    <component :is="copiedId === 'create-response' ? Check : Copy" class="h-3 w-3" :class="copiedId === 'create-response' ? 'text-indigo-600 dark:text-indigo-400' : ''" />
+                                    {{ copiedId === 'create-response' ? 'Disalin!' : 'Salin' }}
+                                </button>
+                            </div>
+                            <pre class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ createResponse }}</code></pre>
+                        </div>
+
                         <!-- Field Description Table -->
                         <div class="mt-5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm dark:shadow-none overflow-hidden">
                             <div class="border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-900 px-4 py-3">
@@ -641,6 +779,68 @@ axios.request(config)
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </section>
+
+                    <!-- ─── DETAIL TRANSACTION ─── -->
+                    <section id="detail-transaction" class="scroll-mt-24">
+                        <div class="mb-5">
+                            <div class="flex items-center gap-2">
+                                <Terminal class="h-4 w-4 text-indigo-600 dark:text-indigo-400" />
+                                <h3 class="text-lg font-bold text-slate-900 dark:text-white">Detail Transaksi</h3>
+                            </div>
+                            <p class="mt-1 text-sm text-slate-500 dark:text-zinc-400">Mendapatkan detail status transaksi tertentu menggunakan `txid`.</p>
+                        </div>
+
+                        <!-- Endpoint info -->
+                        <div class="mb-4 flex flex-wrap gap-3">
+                            <span class="flex items-center gap-1.5 rounded-full border border-indigo-200 dark:border-indigo-500/30 bg-indigo-50 dark:bg-indigo-500/10 px-3 py-1 font-mono text-xs font-bold text-indigo-700 dark:text-indigo-400">GET</span>
+                            <code class="flex items-center rounded-lg border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-1 font-mono text-xs text-slate-600 dark:text-zinc-400">{{ detailEndpoint }}</code>
+                        </div>
+
+                        <!-- Code example tabs -->
+                        <div class="rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-[#0f0f12] overflow-hidden">
+                            <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-white/[0.02] px-4 py-3">
+                                <div class="flex items-center gap-4">
+                                    <div class="flex items-center gap-2">
+                                        <Terminal class="h-3.5 w-3.5 text-slate-500 dark:text-zinc-500" />
+                                        <span class="text-[11px] font-medium text-slate-600 dark:text-zinc-400">Contoh Kode</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <button @click="activeTabDetail = 'curl'" :class="activeTabDetail === 'curl' ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-zinc-300'" class="text-[11px] uppercase tracking-wider transition-colors">cURL</button>
+                                        <button @click="activeTabDetail = 'php'" :class="activeTabDetail === 'php' ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-zinc-300'" class="text-[11px] uppercase tracking-wider transition-colors">PHP</button>
+                                        <button @click="activeTabDetail = 'node'" :class="activeTabDetail === 'node' ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-zinc-500 hover:text-slate-700 dark:hover:text-zinc-300'" class="text-[11px] uppercase tracking-wider transition-colors">Node.js</button>
+                                    </div>
+                                </div>
+                                <button
+                                    @click="copyToClipboard(activeTabDetail === 'curl' ? detailCurl : (activeTabDetail === 'php' ? detailPhp : detailNode), 'detail-code')"
+                                    class="flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-zinc-400 transition-all hover:border-slate-300 dark:hover:border-zinc-600 hover:text-slate-900 dark:hover:text-zinc-200 shadow-sm"
+                                >
+                                    <component :is="copiedId === 'detail-code' ? Check : Copy" class="h-3 w-3" :class="copiedId === 'detail-code' ? 'text-indigo-600 dark:text-indigo-400' : ''" />
+                                    {{ copiedId === 'detail-code' ? 'Disalin!' : 'Salin' }}
+                                </button>
+                            </div>
+                            <pre v-show="activeTabDetail === 'curl'" class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ detailCurl }}</code></pre>
+                            <pre v-show="activeTabDetail === 'php'" class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ detailPhp }}</code></pre>
+                            <pre v-show="activeTabDetail === 'node'" class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ detailNode }}</code></pre>
+                        </div>
+
+                        <!-- Response Body -->
+                        <div class="mt-4 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-[#0f0f12] overflow-hidden">
+                            <div class="flex items-center justify-between border-b border-slate-200 dark:border-zinc-800 bg-white dark:bg-white/[0.02] px-4 py-3">
+                                <div class="flex items-center gap-2">
+                                    <FileJson class="h-3.5 w-3.5 text-slate-500 dark:text-zinc-500" />
+                                    <span class="text-[11px] font-medium text-slate-600 dark:text-zinc-400">Response Body (JSON)</span>
+                                </div>
+                                <button
+                                    @click="copyToClipboard(detailResponse, 'detail-response')"
+                                    class="flex items-center gap-1.5 rounded-md border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1 text-[11px] font-medium text-slate-600 dark:text-zinc-400 transition-all hover:border-slate-300 dark:hover:border-zinc-600 hover:text-slate-900 dark:hover:text-zinc-200 shadow-sm"
+                                >
+                                    <component :is="copiedId === 'detail-response' ? Check : Copy" class="h-3 w-3" :class="copiedId === 'detail-response' ? 'text-indigo-600 dark:text-indigo-400' : ''" />
+                                    {{ copiedId === 'detail-response' ? 'Disalin!' : 'Salin' }}
+                                </button>
+                            </div>
+                            <pre class="overflow-x-auto p-4 text-[13px] leading-relaxed text-slate-800 dark:text-zinc-300"><code>{{ detailResponse }}</code></pre>
                         </div>
                     </section>
 

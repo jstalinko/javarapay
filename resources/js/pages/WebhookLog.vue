@@ -1,8 +1,18 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { ref } from 'vue';
+import { Head, Link, router } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
-import { Clock, ExternalLink, RefreshCw } from 'lucide-vue-next';
+import { Clock, ExternalLink, RefreshCw, Eye, Copy, Check } from 'lucide-vue-next';
+import { toast } from 'vue-sonner';
+import { Button } from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
 
 interface WebhookLog {
     id: number;
@@ -61,6 +71,57 @@ const getStatusBadge = (code: number | null) => {
     
     return { text: code.toString(), class: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800' };
 };
+
+const isResending = ref<number | null>(null);
+const selectedLog = ref<WebhookLog | null>(null);
+const isDetailOpen = ref(false);
+const copiedId = ref<string | null>(null);
+
+const openDetail = (log: WebhookLog) => {
+    selectedLog.value = log;
+    isDetailOpen.value = true;
+};
+
+const formatJSON = (val: any) => {
+    if (!val) return '—';
+    try {
+        const parsed = typeof val === 'string' ? JSON.parse(val) : val;
+        return JSON.stringify(parsed, null, 2);
+    } catch (e) {
+        return String(val);
+    }
+};
+
+const copyText = (text: string, id: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+        copiedId.value = id;
+        toast.success('Disalin ke clipboard!');
+        setTimeout(() => {
+            copiedId.value = null;
+        }, 2000);
+    });
+};
+
+const resendWebhook = (logId: number) => {
+    isResending.value = logId;
+    router.post(`/dashboard/webhook/${logId}/resend`, {}, {
+        onSuccess: () => {
+            toast.success('Webhook berhasil dikirim ulang');
+            if (selectedLog.value && selectedLog.value.id === logId) {
+                const updated = props.logs.data.find(l => l.id === logId);
+                if (updated) {
+                    selectedLog.value = updated;
+                }
+            }
+        },
+        onError: () => {
+            toast.error('Gagal mengirim ulang webhook');
+        },
+        onFinish: () => {
+            isResending.value = null;
+        }
+    });
+};
 </script>
 
 <template>
@@ -84,6 +145,7 @@ const getStatusBadge = (code: number | null) => {
                                 <th class="h-12 px-4 text-right align-middle font-medium">Retries</th>
                                 <th class="h-12 px-4 text-right align-middle font-medium">Last Sent At</th>
                                 <th class="h-12 px-4 text-right align-middle font-medium">Created At</th>
+                                <th class="h-12 px-4 text-center align-middle font-medium w-[150px]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y">
@@ -122,9 +184,26 @@ const getStatusBadge = (code: number | null) => {
                                         </div>
                                     </div>
                                 </td>
+                                <td class="p-4 align-middle text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <Button variant="outline" size="sm" class="h-8 px-2.5" @click="openDetail(log)">
+                                            <Eye class="h-3.5 w-3.5 mr-1" />
+                                            Detail
+                                        </Button>
+                                        <Button 
+                                            variant="outline" 
+                                            size="sm" 
+                                            class="h-8 px-2.5 border-indigo-200 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-800 dark:text-indigo-400 dark:hover:bg-indigo-950/30" 
+                                            @click.stop="resendWebhook(log.id)"
+                                            :disabled="isResending === log.id"
+                                        >
+                                            <RefreshCw class="h-3.5 w-3.5" :class="{'animate-spin': isResending === log.id}" />
+                                        </Button>
+                                    </div>
+                                </td>
                             </tr>
                             <tr v-if="logs.data.length === 0">
-                                <td colspan="6" class="p-12 text-center text-muted-foreground">
+                                <td colspan="7" class="p-12 text-center text-muted-foreground">
                                     <div class="flex flex-col items-center gap-2">
                                         <ExternalLink class="h-8 w-8 opacity-20" />
                                         <p>No webhook logs found.</p>
@@ -149,5 +228,81 @@ const getStatusBadge = (code: number | null) => {
                 </div>
             </div>
         </div>
+
+        <!-- Detail Modal -->
+        <Dialog v-model:open="isDetailOpen">
+            <DialogContent class="sm:max-w-[700px] max-h-[85vh] overflow-y-auto">
+                <DialogHeader>
+                    <DialogTitle class="flex items-center gap-2">
+                        <span>Detail Webhook Log</span>
+                        <span v-if="selectedLog" :class="['inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-semibold', getStatusBadge(selectedLog.response_code).class]">
+                            {{ getStatusBadge(selectedLog.response_code).text }}
+                        </span>
+                    </DialogTitle>
+                </DialogHeader>
+
+                <div v-if="selectedLog" class="space-y-4 py-4 text-sm">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Project</span>
+                            <div class="font-medium text-foreground mt-0.5">{{ selectedLog.project?.name || 'Unknown' }}</div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Retries</span>
+                            <div class="font-medium text-foreground mt-0.5">{{ selectedLog.retries }}</div>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Webhook URL</span>
+                            <div class="font-mono text-xs text-muted-foreground break-all mt-0.5">{{ selectedLog.project?.webhook_url || '—' }}</div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Created At</span>
+                            <div class="font-medium text-foreground mt-0.5 text-xs">{{ formatDate(selectedLog.created_at) }}</div>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Last Sent At</span>
+                            <div class="font-medium text-foreground mt-0.5 text-xs">{{ formatDate(selectedLog.last_sent_at) }}</div>
+                        </div>
+                    </div>
+
+                    <hr class="border-border" />
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Request Payload (JSON)</span>
+                            <Button variant="ghost" size="sm" class="h-6 px-2 text-xs" @click="copyText(formatJSON(selectedLog.payload), 'payload')">
+                                <component :is="copiedId === 'payload' ? Check : Copy" class="h-3 w-3 mr-1" />
+                                {{ copiedId === 'payload' ? 'Copied' : 'Copy' }}
+                            </Button>
+                        </div>
+                        <pre class="bg-muted p-3 rounded-lg text-xs font-mono overflow-x-auto max-h-[150px] border"><code>{{ formatJSON(selectedLog.payload) }}</code></pre>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[10px] uppercase font-bold text-muted-foreground tracking-wider">Response Body</span>
+                            <Button variant="ghost" size="sm" class="h-6 px-2 text-xs" @click="copyText(formatJSON(selectedLog.response_body), 'response_body')">
+                                <component :is="copiedId === 'response_body' ? Check : Copy" class="h-3 w-3 mr-1" />
+                                {{ copiedId === 'response_body' ? 'Copied' : 'Copy' }}
+                            </Button>
+                        </div>
+                        <pre class="bg-muted p-3 rounded-lg text-xs font-mono overflow-x-auto max-h-[150px] border"><code>{{ formatJSON(selectedLog.response_body) }}</code></pre>
+                    </div>
+                </div>
+
+                <DialogFooter class="flex sm:justify-between items-center gap-2">
+                    <Button variant="outline" @click="isDetailOpen = false">Tutup</Button>
+                    <Button 
+                        v-if="selectedLog"
+                        @click="resendWebhook(selectedLog.id)" 
+                        :disabled="isResending === selectedLog.id"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                        <RefreshCw class="mr-2 h-4 w-4" :class="{'animate-spin': isResending === selectedLog.id}" />
+                        {{ isResending === selectedLog.id ? 'Mengirim...' : 'Kirim Ulang' }}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </AppLayout>
 </template>

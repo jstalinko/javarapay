@@ -106,5 +106,46 @@ class DashboardController extends Controller
         ]);
     }
 
-   
+    public function resendWebhook(Request $request, $id)
+    {
+        $log = \App\Models\WebhookLog::with('project')->findOrFail($id);
+
+        // Security check: Make sure the user owns the project or is admin
+        if (auth()->user()->role !== 'admin' && $log->project->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Logic to send webhook
+        $project = $log->project;
+        if (!$project || !$project->webhook_url) {
+            return back()->with('error', 'Webhook URL not set for this project.');
+        }
+
+        // Decode the payload
+        $data = json_decode($log->payload, true);
+
+        try {
+            $response = \Illuminate\Support\Facades\Http::timeout(10)->post($project->webhook_url, $data);
+            
+            $log->response_code = $response->status();
+            $log->response_body = $response->body();
+            $log->last_sent_at = now();
+            $log->retries += 1;
+            $log->save();
+
+            if ($response->successful()) {
+                return back()->with('success', 'Webhook resent successfully.');
+            } else {
+                return back()->with('error', 'Webhook resent but returned status ' . $response->status());
+            }
+        } catch (\Throwable $e) {
+            $log->response_code = 500;
+            $log->response_body = $e->getMessage();
+            $log->last_sent_at = now();
+            $log->retries += 1;
+            $log->save();
+            
+            return back()->with('error', 'Webhook resent failed: ' . $e->getMessage());
+        }
+    }
 }
