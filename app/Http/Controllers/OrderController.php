@@ -155,7 +155,32 @@ class OrderController extends Controller
         $transaction->reference = $txData['reference'] ?? null;
         $transaction->pay_url = $txData['pay_url'] ?? null;
         $transaction->pay_code = $txData['pay_code'] ?? null;
-        $transaction->qr_url = $txData['qr_url'] ?? null;
+        
+        $transaction->qr_url = null;
+        if (isset($txData['qr_url'])) {
+            $qrContent = file_get_contents($txData['qr_url']);
+            
+            // Define directory and filename
+            $dir = storage_path('app/public/qrs');
+            $fileName = $transaction->txid . '.png';
+            $filePath = $dir . '/' . $fileName;
+
+            // Ensure directory exists
+            if (!file_exists($dir)) {
+                mkdir($dir, 0755, true);
+            }
+
+            // Save file
+            if (file_put_contents($filePath, $qrContent) !== false) {
+                $transaction->qr_url = 'qrs/' . $fileName;
+            } else {
+                Log::error('Failed to save QR image in OrderController', [
+                    'txid' => $transaction->txid,
+                    'url' => $txData['qr_url']
+                ]);
+            }
+        }
+
         $transaction->expired_at = isset($txData['expired_time']) ? date('Y-m-d H:i:s', $txData['expired_time']) : null;
         
         $transaction->save();

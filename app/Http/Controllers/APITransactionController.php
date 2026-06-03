@@ -160,6 +160,7 @@ class APITransactionController extends Controller
             // Save file
             if (file_put_contents($filePath, $qrContent) !== false) {
                 $transaction->qr_url = 'qrs/' . $fileName;
+                $qr_url = url('/storage/' . $transaction->qr_url);
             } else {
                 Log::error('Failed to save QR image', [
                     'txid' => $transaction->txid,
